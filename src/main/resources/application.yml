@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
   grpc:
     enable: false
@@ -6,5 +9,3 @@ spring:
       host: 127.0.0.1
       port: 6565
 
-server:
-  port: 8080
