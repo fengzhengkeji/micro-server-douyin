@@ -1,0 +1,10 @@
+spring:
+  grpc:
+    enable: false
+    remote-servers:
+    - server: micro-node-douyin
+      host: 127.0.0.1
+      port: 6565
+
+server:
+  port: 8080
