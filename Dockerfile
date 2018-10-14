@@ -1,19 +1,11 @@
-FROM openjdk:8-jre-alpine
+FROM registry.cn-hangzhou.aliyuncs.com/micro-java/openjdk:8-jre-alpine
 
-ADD target/*.jar /data/app.jar
+ENV TZ="Asia/Shanghai" JVM_PARAMS="" APP_CONFIG_URL="" APP_ENV="" APP_NAME="" APP_LABEL=""
 
-ENV MYSQL_URL=jdbc:mysql://mysql-userDTO:3306/userDTO \
-    MYSQL_USERNAME=root \
-    MYSQL_PASSWORD=Passw0rd
+ADD target/*.jar /server.jar
 
-EXPOSE 8080
-
-CMD java -jar \
-    -server \
-    -Xms300m \
-    -Xmx300m \
-    -XX:MaxMetaspaceSize=64m \
-    /data/app.jar \
-    --spring.datasource.url=$MYSQL_URL \
-    --spring.datasource.username=$MYSQL_USERNAME \
-    --spring.datasource.password=$MYSQL_PASSWORD
+CMD java $JVM_PARAMS -Djava.security.egd=file:/dev/./urandom -jar /server.jar \
+    --spring.cloud.config.uri=$APP_CONFIG_URL \
+    --spring.cloud.config.profile=$APP_ENV \
+    --spring.application.name=$APP_NAME \
+    --spring.cloud.config.label=$APP_LABEL
