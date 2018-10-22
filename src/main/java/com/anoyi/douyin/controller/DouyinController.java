@@ -1,9 +1,8 @@
 package com.anoyi.douyin.controller;
 
+import com.anoyi.douyin.bean.DyUserVO;
 import com.anoyi.douyin.entity.DyAweme;
-import com.anoyi.douyin.entity.DyUser;
 import com.anoyi.douyin.service.DouyinService;
-import com.anoyi.douyin.bean.UserVO;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,15 +15,15 @@ public class DouyinController {
     private final DouyinService douyinService;
 
     @GetMapping("/user/{id}")
-    public UserVO user(@PathVariable("id") String id){
-
-        return null;
+    public DyUserVO user(@PathVariable("id") String id){
+        return douyinService.getDyUser(id);
     }
 
     @GetMapping("/videos/{id}")
-    public DyAweme videos(@PathVariable("id") String id){
-        DyUser dyUser = douyinService.getDyUser(id);
-        return douyinService.videoList(id, dyUser.getDytk());
+    public DyAweme videos(@PathVariable("id") String id,
+                          @RequestParam("tk") String tk,
+                          @RequestParam(value = "cursor", defaultValue = "0") String cursor){
+        return douyinService.videoList(id, tk, cursor);
     }
 
 }
