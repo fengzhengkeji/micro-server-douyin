@@ -19,9 +19,9 @@ public class DouyinController {
         return douyinService.getDyUser(id);
     }
 
-    @GetMapping("/videos/{id}")
+    @GetMapping("/videos/{id}/{tk}")
     public DyAweme videos(@PathVariable("id") String id,
-                          @RequestParam("tk") String tk,
+                          @PathVariable("tk") String tk,
                           @RequestParam(value = "cursor", defaultValue = "0") String cursor){
         return douyinService.videoList(id, tk, cursor);
     }
