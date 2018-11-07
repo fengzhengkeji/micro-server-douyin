@@ -26,9 +26,11 @@ public class DouyinService {
 
     private final static String XMLHttpRequest = "XMLHttpRequest";
 
-    private final static String VIDEO_LIST_API = "https://www.amemv.com/aweme/v1/aweme/post/?user_id=%s&count=21&max_cursor=%s&aid=1128&_signature=%s&dytk=%s";
+    private final static String VIDEO_LIST_API = "https://www.iesdouyin.com/aweme/v1/aweme/post/?user_id=%s&count=21&max_cursor=%s&aid=1128&_signature=%s&dytk=%s";
 
-    private final static String USER_SHARE_API = "https://www.amemv.com/share/user/%s?share_type=link";
+    private final static String USER_SHARE_API = "https://www.iesdouyin.com/share/user/%s";
+
+    private final static String REFERER_URL = "https://www.iesdouyin.com/share/user/%s";
 
     private final RpcNodeDyService rpcNodeDyService;
 
@@ -38,8 +40,9 @@ public class DouyinService {
     public DyAweme videoList(String dyId, String dytk, String cursor) {
         String signature = rpcNodeDyService.generateSignature(dyId);
         String api = String.format(VIDEO_LIST_API, dyId, cursor, signature, dytk);
+        String referer = String.format(REFERER_URL, dyId);
         try {
-            Document document = httpGet(api);
+            Document document = httpGetWithReffer(api, referer);
             return JSON.parseObject(document.text(), DyAweme.class);
         } catch (IOException e) {
             e.printStackTrace();
@@ -94,6 +97,21 @@ public class DouyinService {
                 .header("user-agent", UserAgent)
                 .header("x-requested-with", XMLHttpRequest)
                 .header("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
+                .header("referer", "https://www.iesdouyin.com/share/user/")
+                .ignoreContentType(true).execute();
+        String html = response.body().replace("&#xe", "");
+        return Jsoup.parse(html);
+    }
+
+    /**
+     * HTTP 请求
+     */
+    private Document httpGetWithReffer(String url, String referer) throws IOException {
+        Connection.Response response = Jsoup.connect(url)
+                .header("user-agent", UserAgent)
+                .header("x-requested-with", XMLHttpRequest)
+                .header("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
+                .header("referer", referer)
                 .ignoreContentType(true).execute();
         String html = response.body().replace("&#xe", "");
         return Jsoup.parse(html);
